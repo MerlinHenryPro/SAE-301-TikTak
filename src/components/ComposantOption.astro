@@ -1,0 +1,33 @@
+---
+// Option de composant dans le configurateur : propriétés de l'entité COMPOSANT
+import { formatPrix } from '../i18n/index.js';
+
+interface Props {
+  id_composant: number;
+  type: string;
+  libelle: string;
+  forme: string | null;
+  materiau: string;
+  couleur: string;
+  nom_couleur: string;
+  prix: number;
+  populaire?: boolean;
+}
+const { id_composant, type, libelle, forme, materiau, couleur, nom_couleur, prix, populaire = false } = Astro.props;
+const { lang } = Astro.locals;
+---
+<label class="relative flex items-center gap-3 p-3 rounded-box border border-base-300 cursor-pointer hover:border-base-content/40 has-[:checked]:border-base-content has-[:checked]:bg-base-200 transition-colors">
+  <input type="radio" class="sr-only" name={type} value={id_composant}
+    data-couleur={couleur} data-prix={prix} data-forme={forme ?? ''} data-libelle={libelle} />
+  {forme === 'rond'
+    ? <span class="pastille" style={`background:${couleur}`}></span>
+    : forme === 'carre'
+      ? <span class="pastille rounded-sm!" style={`background:${couleur}`}></span>
+      : <span class="pastille" style={`background:${couleur}`}></span>}
+  <span class="flex-1 min-w-0">
+    <span class="block text-sm font-medium truncate">{nom_couleur}</span>
+    <span class="block text-xs text-base-content/60 truncate">{materiau}{forme ? ` · ${forme === 'rond' ? 'Rond' : 'Carré'}` : ''}</span>
+  </span>
+  <span class="text-sm tabular-nums">+{formatPrix(prix, lang)}</span>
+  {populaire && <span class="absolute -top-2 right-2 badge badge-secondary badge-xs">Le plus choisi</span>}
+</label>

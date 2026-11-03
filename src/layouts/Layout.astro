@@ -1,0 +1,138 @@
+---
+import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+
+interface Props {
+  titre: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+}
+const {
+  titre,
+  description = 'TiK•TaK, montres françaises personnalisables : composez votre montre (bracelet, cadran, boîtier) ou décrivez-la à notre assistant IA, puis commandez-la en ligne.',
+  image = '/og-image.png',
+  noindex = false,
+} = Astro.props;
+const { user, lang, t } = Astro.locals;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const titreComplet = `${titre} · TiK•TaK`;
+const nav = [
+  { href: '/', label: t('nav.accueil') },
+  { href: '/configurateur', label: t('nav.configurer') },
+  ...(user ? [
+    { href: '/montres', label: t('nav.montres') },
+    { href: '/commandes', label: t('nav.commandes') },
+  ] : []),
+];
+const actif = (href: string) => (href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href));
+---
+<!doctype html>
+<html lang={lang} data-theme="tiktak">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="montre personnalisée, montre française, configurateur de montre, TiK•TaK, montre minimaliste, cadeau" />
+    <meta name="author" content="TiK•TaK" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <meta name="theme-color" content="#F7F4EF" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="fr" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Open Graph / réseaux sociaux -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TiK•TaK" />
+    <meta property="og:locale" content={lang === 'en' ? 'en_GB' : 'fr_FR'} />
+    <meta property="og:title" content={titreComplet} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titreComplet} />
+    <meta name="twitter:description" content={description} />
+    <!-- Données structurées -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'TiK•TaK',
+      url: Astro.site?.toString(),
+      logo: new URL('/favicon.svg', Astro.site).toString(),
+      description: 'Montres françaises personnalisables, au style raffiné et minimaliste.',
+    })} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="sticky top-0 z-40 bg-base-100/90 backdrop-blur border-b border-base-300">
+      <div class="navbar max-w-7xl mx-auto px-4">
+        <div class="navbar-start">
+          <div class="dropdown lg:hidden">
+            <button tabindex="0" class="btn btn-ghost btn-square" aria-label="Menu">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16" /></svg>
+            </button>
+            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-56 p-2 shadow-lg border border-base-300">
+              {nav.map((l) => <li><a href={l.href} class={actif(l.href) ? 'menu-active' : ''}>{l.label}</a></li>)}
+            </ul>
+          </div>
+          <a href="/" class="ml-1" aria-label="TiK•TaK, accueil"><Logo /></a>
+        </div>
+        <nav class="navbar-center hidden lg:flex" aria-label="Navigation principale">
+          <ul class="flex gap-8 text-sm">
+            {nav.map((l) => (
+              <li><a href={l.href} class:list={['py-2 border-b transition-colors', actif(l.href) ? 'border-base-content' : 'border-transparent hover:border-base-content/40']}>{l.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+        <div class="navbar-end gap-2">
+          <a href={`/api/lang?l=${lang === 'fr' ? 'en' : 'fr'}&r=${encodeURIComponent(Astro.url.pathname + Astro.url.search)}`} class="btn btn-ghost btn-sm text-xs tracking-widest" aria-label="Changer de langue">
+            {lang === 'fr' ? 'EN' : 'FR'}
+          </a>
+          {user ? (
+            <div class="dropdown dropdown-end">
+              <button tabindex="0" class="btn btn-ghost btn-sm gap-2 normal-case">
+                {user.avatar ? <img src={user.avatar} alt="" class="size-7 rounded-full" referrerpolicy="no-referrer" /> :
+                  <span class="size-7 rounded-full bg-primary text-primary-content grid place-items-center text-xs">{user.nom[0]}</span>}
+                <span class="hidden sm:inline">{user.nom.split(' ')[0]}</span>
+              </button>
+              <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
+                <li><a href="/montres">{t('nav.montres')}</a></li>
+                <li><a href="/commandes">{t('nav.commandes')}</a></li>
+                <li>
+                  <form method="POST" action="/api/auth/logout"><button class="w-full text-left">{t('nav.deconnexion')}</button></form>
+                </li>
+              </ul>
+            </div>
+          ) : (
+            <a href="/connexion" class="btn btn-primary btn-sm">{t('nav.connexion')}</a>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t border-base-300 mt-24">
+      <div class="max-w-7xl mx-auto px-4 py-12 grid gap-8 md:grid-cols-3 text-sm">
+        <div class="space-y-3">
+          <Logo />
+          <p class="text-base-content/60 max-w-xs">Des montres minimalistes, pensées par vous, assemblées à la main en France.</p>
+        </div>
+        <div class="space-y-1 text-base-content/70">
+          <p>{t('footer.made')}</p>
+          <p>{t('footer.garantie')}</p>
+        </div>
+        <nav class="flex md:justify-end gap-6 text-base-content/70" aria-label="Pied de page">
+          <a href="/configurateur" class="link link-hover">{t('nav.configurer')}</a>
+          <a href="/connexion" class="link link-hover">{t('nav.connexion')}</a>
+        </nav>
+      </div>
+      <p class="text-center text-xs text-base-content/40 pb-8">© {new Date().getFullYear()} TiK•TaK. Projet étudiant SAE 301.</p>
+    </footer>
+  </body>
+</html>

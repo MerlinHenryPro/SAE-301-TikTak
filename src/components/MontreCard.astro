@@ -1,0 +1,36 @@
+---
+// Carte d'une montre : mêmes propriétés que l'entité MONTRE du modèle
+import Montre from './Montre.astro';
+import { formatPrix, formatDate } from '../i18n/index.js';
+
+interface Props {
+  id_montre: number;
+  nom: string;
+  prix: number;
+  date_creation: string;
+  svg: string | null;
+  nb_commandes?: number;
+}
+const { id_montre, nom, prix, date_creation, svg, nb_commandes = 0 } = Astro.props;
+const { lang, t } = Astro.locals;
+---
+<article class="card bg-base-100 border border-base-300 hover:border-base-content/40 transition-colors group" data-montre={id_montre}>
+  <a href={`/montre/${id_montre}`} class="block bg-base-200 rounded-t-box p-6">
+    <Montre svg={svg} nom={nom} class="max-h-64 mx-auto group-hover:scale-[1.03] transition-transform" />
+  </a>
+  <div class="card-body gap-1 p-5">
+    <div class="flex items-start justify-between gap-2">
+      <h3 class="card-title font-serif text-xl">{nom}</h3>
+      <span class="font-medium whitespace-nowrap">{formatPrix(prix, lang)}</span>
+    </div>
+    <p class="text-xs text-base-content/50">Créée le {formatDate(date_creation, lang)} · Réf. TT-{String(id_montre).padStart(5, '0')}</p>
+    {nb_commandes > 0 && <span class="badge badge-outline badge-sm mt-1">Commandée</span>}
+    <div class="card-actions mt-3">
+      <a href={`/montre/${id_montre}`} class="btn btn-sm btn-primary">{t('commun.voir')}</a>
+      <a href={`/configurateur?id=${id_montre}`} class="btn btn-sm btn-ghost">{t('commun.modifier')}</a>
+      {nb_commandes === 0 && (
+        <button class="btn btn-sm btn-ghost text-error ml-auto" data-supprimer={id_montre} data-nom={nom}>{t('commun.supprimer')}</button>
+      )}
+    </div>
+  </div>
+</article>

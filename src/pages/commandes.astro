@@ -1,0 +1,65 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Montre from '../components/Montre.astro';
+import { commandesUtilisateur } from '../lib/montres.js';
+import { formatPrix, formatDate } from '../i18n/index.js';
+
+const { user, lang, t } = Astro.locals;
+const commandes = commandesUtilisateur(user.id_utilisateur);
+const nouvelle = Number(Astro.url.searchParams.get('nouvelle'));
+const statuts: Record<string, [string, string]> = {
+  validee: ['Validée', 'badge-info'],
+  expediee: ['Expédiée', 'badge-warning'],
+  livree: ['Livrée', 'badge-success'],
+  annulee: ['Annulée', 'badge-error'],
+};
+---
+<Layout titre={t('commandes.titre')} noindex>
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <p class="eyebrow">Mon espace</p>
+    <h1 class="text-5xl mt-2 mb-8">{t('commandes.titre')}</h1>
+
+    {nouvelle > 0 && (
+      <div class="alert alert-success mb-8">
+        <span>Merci ! Votre commande n°{nouvelle} est confirmée. Notre atelier de Besançon commence l’assemblage.</span>
+      </div>
+    )}
+
+    {commandes.length === 0 ? (
+      <div class="text-center py-24 border border-dashed border-base-300 rounded-box">
+        <p class="text-base-content/60">{t('commandes.vide')}</p>
+        <a href="/montres" class="btn btn-primary mt-4">Voir mes montres</a>
+      </div>
+    ) : (
+      <ol class="space-y-6">
+        {commandes.map((c) => (
+          <li class="card border border-base-300">
+            <div class="card-body">
+              <div class="flex flex-wrap justify-between gap-2">
+                <div>
+                  <h2 class="text-2xl">Commande n°{c.id_commande}</h2>
+                  <p class="text-sm text-base-content/60">Passée le {formatDate(c.date_commande, lang)}</p>
+                </div>
+                <div class="text-right">
+                  <span class:list={['badge', statuts[c.statut][1]]}>{statuts[c.statut][0]}</span>
+                  <p class="text-xl font-serif mt-1">{formatPrix(c.total, lang)}</p>
+                </div>
+              </div>
+              <ul class="divide-y divide-base-300 mt-2">
+                {c.lignes.map((l) => (
+                  <li class="flex items-center gap-4 py-3">
+                    <a href={`/montre/${l.id_montre}`} class="w-12 shrink-0"><Montre svg={l.svg} nom={l.nom_montre} /></a>
+                    <a href={`/montre/${l.id_montre}`} class="flex-1 link link-hover">{l.nom_montre}</a>
+                    <span class="text-sm text-base-content/60">× {l.quantite}</span>
+                    <span class="tabular-nums w-24 text-right">{formatPrix(l.prix_unitaire * l.quantite, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+              <p class="text-xs text-base-content/50">dont livraison {formatPrix(c.frais_livraison, lang)}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    )}
+  </div>
+</Layout>

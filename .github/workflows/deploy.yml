@@ -1,0 +1,42 @@
+# Déploiement automatique sur le VPS à chaque push sur main.
+# Secrets à créer dans GitHub > Settings > Secrets and variables > Actions :
+#   VPS_HOST     : IP ou domaine du VPS
+#   VPS_USER     : utilisateur SSH (ex. ubuntu)
+#   VPS_SSH_KEY  : clé privée SSH (la clé publique doit être dans ~/.ssh/authorized_keys du VPS)
+name: Déploiement VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Déploiement par SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            export PATH="$HOME/.bun/bin:$PATH"
+            cd /var/www/tiktak
+            git fetch origin main
+            git reset --hard origin/main
+            bun install --frozen-lockfile
+            bun run build
+            sudo systemctl restart tiktak
+            sleep 3
+            curl -fsS http://127.0.0.1:4321/ > /dev/null && echo "TiK•TaK en ligne"

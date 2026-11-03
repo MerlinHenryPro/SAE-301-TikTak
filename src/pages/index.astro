@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Montre from '../components/Montre.astro';
+import { SVG_TEMPLATE, composantsParIds } from '../lib/montres.js';
+import { genererSvg, PRIX_BASE } from '../lib/watch-core.js';
+import { totalMontres } from '../lib/stats.js';
+import { formatPrix } from '../i18n/index.js';
+
+const { t, lang } = Astro.locals;
+// Trois créations « vitrine » générées à partir du catalogue
+const vitrine = [
+  { nom: 'Signature', ids: [2, 13, 17, 22], texte: 'Cuir camel, cadran rond noir, acier.' },
+  { nom: 'Minuit', ids: [6, 12, 18, 23], texte: 'Silicone bleu nuit, cadran carré saphir.' },
+  { nom: 'Rose poudré', ids: [8, 14, 20, 25], texte: 'Maille milanaise or rose, cadran ivoire.' },
+].map((v) => ({ ...v, svg: genererSvg(SVG_TEMPLATE, composantsParIds(v.ids)) }));
+const total = totalMontres();
+---
+<Layout titre="Montres françaises personnalisables" description="Composez votre montre TiK•TaK : bracelet, cadran rond ou carré, boîtier. Une horlogerie française, minimaliste et raffinée, à votre image. Dès 79 €.">
+  <!-- HERO -->
+  <section class="max-w-7xl mx-auto px-4 pt-12 lg:pt-20 grid lg:grid-cols-2 gap-12 items-center">
+    <div class="space-y-8">
+      <p class="eyebrow">{t('home.eyebrow')}</p>
+      <h1 class="text-5xl md:text-7xl leading-[1.05]">{t('home.titre')}</h1>
+      <p class="text-lg text-base-content/70 max-w-lg">{t('home.sous')}</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="/configurateur" class="btn btn-primary btn-lg">{t('home.cta')}</a>
+        <a href="/configurateur#assistant" class="btn btn-ghost btn-lg border-base-300">{t('home.cta2')}</a>
+      </div>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-base-content/60">
+        <li>✓ Assemblée à Besançon</li>
+        <li>✓ Livraison offerte dès 2 montres</li>
+        <li>✓ Retours 30 jours</li>
+      </ul>
+    </div>
+    <div class="relative bg-base-200 rounded-box aspect-square grid place-items-center overflow-hidden">
+      <Montre svg={vitrine[0].svg} nom="Montre TiK•TaK Signature" class="h-[85%]" />
+      <div class="absolute bottom-6 left-6 bg-base-100/90 rounded-box px-4 py-3 text-sm shadow-sm">
+        <p class="font-medium">Signature</p>
+        <p class="text-base-content/60">dès {formatPrix(PRIX_BASE, lang)} · la plus composée</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREUVE SOCIALE -->
+  <section class="max-w-7xl mx-auto px-4 mt-20">
+    <div class="stats stats-vertical md:stats-horizontal w-full border border-base-300 bg-base-100">
+      <div class="stat"><div class="stat-title">Créations déjà composées</div><div class="stat-value font-serif font-normal">{total}</div></div>
+      <div class="stat"><div class="stat-title">Combinaisons possibles</div><div class="stat-value font-serif font-normal">1 575</div></div>
+      <div class="stat"><div class="stat-title">Note moyenne de nos clients</div><div class="stat-value font-serif font-normal">4,8/5</div><div class="stat-desc">exemple de contenu pour la maquette</div></div>
+    </div>
+  </section>
+
+  <!-- ÉTAPES -->
+  <section class="max-w-7xl mx-auto px-4 mt-24">
+    <p class="eyebrow">Comment ça marche</p>
+    <h2 class="text-4xl mt-2 mb-10">Trois minutes pour créer la vôtre</h2>
+    <ol class="grid md:grid-cols-3 gap-6">
+      {[
+        ['01', 'Choisissez votre forme', 'Cadran rond intemporel ou carré contemporain, en verre minéral ou saphir.'],
+        ['02', 'Habillez-la', 'Boîtiers acier, titane, or rose ou céramique ; bracelets cuir, acier, silicone ou nylon.'],
+        ['03', 'Signez-la', 'Donnez-lui un nom, enregistrez-la dans votre espace et commandez quand vous voulez.'],
+      ].map(([n, titre, texte]) => (
+        <li class="border-t border-base-content pt-6">
+          <span class="font-serif text-3xl text-secondary">{n}</span>
+          <h3 class="text-2xl mt-2">{titre}</h3>
+          <p class="text-base-content/70 mt-2">{texte}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- VITRINE -->
+  <section class="max-w-7xl mx-auto px-4 mt-24">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <p class="eyebrow">Inspirations</p>
+        <h2 class="text-4xl mt-2">Les créations du moment</h2>
+      </div>
+      <a href="/configurateur" class="link link-hover hidden sm:inline">Créer la mienne →</a>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {vitrine.map((v) => (
+        <a href={`/configurateur?preset=${v.ids.join(',')}&nom=${encodeURIComponent(v.nom)}`} class="card bg-base-200 hover:bg-base-300 transition-colors">
+          <figure class="p-8"><Montre svg={v.svg} nom={v.nom} class="h-72" /></figure>
+          <div class="card-body pt-0">
+            <h3 class="card-title text-2xl">{v.nom}</h3>
+            <p class="text-base-content/70">{v.texte}</p>
+            <span class="text-sm underline underline-offset-4">Personnaliser ce modèle</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ENGAGEMENT -->
+  <section class="max-w-7xl mx-auto px-4 mt-24">
+    <div class="bg-accent text-accent-content rounded-box p-10 md:p-16 grid md:grid-cols-2 gap-8 items-center">
+      <div>
+        <p class="eyebrow text-secondary">Fabrication française</p>
+        <h2 class="text-4xl mt-2">Pensée par vous, assemblée à la main à Besançon.</h2>
+      </div>
+      <p class="opacity-80">Chaque TiK•TaK est assemblée dans notre atelier franc-comtois, berceau de l’horlogerie française. Des matériaux choisis pour durer, un design épuré pour traverser les saisons, et une garantie de deux ans.</p>
+    </div>
+  </section>
+</Layout>

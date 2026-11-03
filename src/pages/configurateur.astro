@@ -1,0 +1,293 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ComposantOption from '../components/ComposantOption.astro';
+import { SVG_TEMPLATE, listerComposants, montreDe, composantsDeMontre } from '../lib/montres.js';
+import { genererSvg, PRIX_BASE, TYPES } from '../lib/watch-core.js';
+import { composantsPopulaires, montresCetteSemaine } from '../lib/stats.js';
+
+const { user, t } = Astro.locals;
+const composants = listerComposants();
+const populaires = composantsPopulaires();
+
+// Configuration initiale : montre existante (?id=), preset (?preset=) ou « Signature » (effet de défaut)
+let nom = 'Ma TiK•TaK';
+let idMontre: number | null = null;
+let selection: Record<string, number> = { bracelet: 2, cadran: 13, boitier_exterieur: 17, boitier_interieur: 22 };
+
+const idParam = Number(Astro.url.searchParams.get('id'));
+const preset = Astro.url.searchParams.get('preset');
+if (idParam && user) {
+  const m = montreDe(idParam, user.id_utilisateur);
+  if (m) {
+    idMontre = m.id_montre;
+    nom = m.nom;
+    for (const c of composantsDeMontre(m.id_montre)) selection[c.type] = c.id_composant;
+  }
+} else if (preset) {
+  for (const id of preset.split(',').map(Number)) {
+    const c = composants.find((x) => x.id_composant === id);
+    if (c) selection[c.type] = c.id_composant;
+  }
+  nom = Astro.url.searchParams.get('nom') || nom;
+}
+const choisis = composants.filter((c) => Object.values(selection).includes(c.id_composant));
+const svgInitial = genererSvg(SVG_TEMPLATE, choisis);
+
+const sections = [
+  { type: 'cadran', titre: 'Cadran', aide: 'La forme et la couleur de l’écran.' },
+  { type: 'boitier_exterieur', titre: 'Boîtier extérieur', aide: 'Le métal qui encadre votre cadran.' },
+  { type: 'boitier_interieur', titre: 'Boîtier intérieur', aide: 'Le liseré intérieur, tout en finesse.' },
+  { type: 'bracelet', titre: 'Bracelet', aide: 'Cuir, acier, silicone ou nylon.' },
+];
+const semaine = montresCetteSemaine();
+---
+<Layout titre={idMontre ? `Modifier « ${nom} »` : 'Configurateur de montre'} description="Configurez votre montre TiK•TaK en direct : choisissez le cadran rond ou carré, le boîtier et le bracelet, ou décrivez votre montre à notre assistant IA.">
+  <div class="max-w-7xl mx-auto px-4 pt-8 pb-16 grid lg:grid-cols-[1.1fr_1fr] gap-10"
+       id="configurateur"
+       data-montre={idMontre ?? ''}
+       data-connecte={user ? '1' : ''}
+       data-composants={JSON.stringify(composants)}
+       data-selection={JSON.stringify(selection)}
+       data-prix-base={PRIX_BASE}>
+
+    <!-- APERÇU -->
+    <section class="lg:sticky lg:top-24 self-start space-y-4" aria-label="Aperçu de la montre">
+      <div class="flex items-center justify-between">
+        <p class="eyebrow">{t('conf.titre')}</p>
+        <p class="text-xs text-base-content/60" id="etape-texte">4 / 4 éléments choisis</p>
+      </div>
+      <progress class="progress progress-secondary w-full h-1" id="progression" value="100" max="100"></progress>
+      <div class="bg-base-200 rounded-box aspect-[4/5] lg:aspect-square grid place-items-center relative overflow-hidden">
+        <div id="apercu" class="montre-svg h-[88%] aspect-[520/740]" set:html={svgInitial}></div>
+        <div class="absolute top-4 left-4 badge badge-ghost bg-base-100/80 border-0 text-xs" id="badge-forme"></div>
+        <p class="absolute bottom-4 inset-x-4 text-center text-xs text-base-content/60">
+          {semaine > 0 ? `${semaine} montre${semaine > 1 ? 's' : ''} composée${semaine > 1 ? 's' : ''} cette semaine sur TiK•TaK` : 'Assemblée à la main à Besançon'}
+        </p>
+      </div>
+      <div id="recap" class="text-sm text-base-content/70 grid grid-cols-2 gap-x-4 gap-y-1"></div>
+    </section>
+
+    <!-- OPTIONS -->
+    <section class="space-y-8" aria-label="Personnalisation">
+      <div>
+        <label class="text-xs uppercase tracking-widest text-base-content/60" for="nom">{t('conf.nom')}</label>
+        <input id="nom" class="input input-ghost w-full text-3xl font-serif px-0 h-auto py-2 border-0 border-b border-base-300 rounded-none focus:outline-none focus:border-base-content" value={nom} maxlength="60" />
+      </div>
+
+      <!-- Assistant IA (bonus : interface de chat) -->
+      <div id="assistant" class="collapse collapse-arrow border border-base-300 bg-base-100">
+        <input type="checkbox" checked={Astro.url.hash === '#assistant'} aria-label="Ouvrir l’assistant" />
+        <div class="collapse-title font-medium flex items-center gap-2">
+          <span class="text-secondary">✦</span> {t('conf.ia')} <span class="badge badge-ghost badge-sm">IA</span>
+        </div>
+        <div class="collapse-content space-y-3">
+          <div id="chat" class="space-y-2 max-h-60 overflow-y-auto text-sm" aria-live="polite">
+            <div class="chat chat-start"><div class="chat-bubble bg-base-200 text-base-content">Décrivez la montre de vos rêves, je la compose pour vous. Vous pourrez ensuite ajuster chaque détail.</div></div>
+          </div>
+          <form id="form-ia" class="join w-full">
+            <input name="message" class="input join-item w-full" placeholder={t('conf.ia.placeholder')} required maxlength="400" />
+            <button class="btn btn-primary join-item">{t('conf.ia.envoyer')}</button>
+          </form>
+          <div class="flex flex-wrap gap-2">
+            {['Sobre et toute noire', 'Élégante pour un mariage', 'Sportive et légère', 'Ronde, cuir camel et or rose'].map((s) => (
+              <button type="button" class="btn btn-xs btn-outline border-base-300 font-normal" data-suggestion={s}>{s}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {sections.map((s, i) => (
+        <fieldset class="space-y-3">
+          <legend class="flex items-baseline gap-3 mb-3">
+            <span class="font-serif text-secondary text-xl">0{i + 1}</span>
+            <span class="text-2xl font-serif">{s.titre}</span>
+            <span class="text-sm text-base-content/50 hidden sm:inline">{s.aide}</span>
+          </legend>
+          <div class="grid sm:grid-cols-2 gap-2">
+            {composants.filter((c) => c.type === s.type).map((c) => (
+              <ComposantOption {...c} populaire={populaires[s.type] === c.id_composant} />
+            ))}
+          </div>
+        </fieldset>
+      ))}
+
+      <!-- RÉCAPITULATIF & ACTIONS -->
+      <div class="sticky bottom-0 bg-base-100/95 backdrop-blur border-t border-base-300 -mx-4 px-4 py-4 lg:static lg:border lg:rounded-box lg:mx-0 lg:p-6 space-y-3">
+        <div class="flex items-end justify-between">
+          <div>
+            <p class="text-xs uppercase tracking-widest text-base-content/60">{t('conf.total')}</p>
+            <p class="text-4xl font-serif" id="prix">—</p>
+          </div>
+          <p class="text-xs text-base-content/60 text-right" id="prix-jour"></p>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button class="btn btn-outline" id="btn-enregistrer">{t('conf.enregistrer')}</button>
+          <button class="btn btn-primary" id="btn-commander">{t('conf.commander')}</button>
+        </div>
+        <p class="text-xs text-base-content/60 text-center">Enregistrez votre création pour la retrouver à tout moment · Livraison offerte dès 2 montres · Retours gratuits 30 jours</p>
+        <div id="message" class="hidden alert text-sm" role="status"></div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  import { SELECTEURS, TYPES, couleurTexteEcran, calculerPrix } from '../lib/watch-core.js';
+
+  const racine = document.getElementById('configurateur')!;
+  const composants: any[] = JSON.parse(racine.dataset.composants!);
+  const selection: Record<string, number> = JSON.parse(racine.dataset.selection!);
+  let idMontre = racine.dataset.montre ? Number(racine.dataset.montre) : null;
+  const connecte = !!racine.dataset.connecte;
+  const apercu = document.getElementById('apercu')!;
+  const inputNom = document.getElementById('nom') as HTMLInputElement;
+  const fmt = new Intl.NumberFormat(document.documentElement.lang === 'en' ? 'en-GB' : 'fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  const fmt2 = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
+  const parId = (id: number) => composants.find((c) => c.id_composant === Number(id));
+
+  // Restaure une création non enregistrée (après connexion)
+  const brouillon = sessionStorage.getItem('tiktak-brouillon');
+  if (brouillon && new URLSearchParams(location.search).has('restaurer')) {
+    try {
+      const b = JSON.parse(brouillon);
+      Object.assign(selection, b.selection);
+      inputNom.value = b.nom;
+    } catch {}
+    sessionStorage.removeItem('tiktak-brouillon');
+  }
+
+  /** Synchronise le SVG avec la sélection (couleurs + bascule carré/rond) */
+  function rendre() {
+    const choisis = TYPES.map((t) => parId(selection[t])).filter(Boolean);
+    const cadran = parId(selection.cadran);
+    const rond = cadran?.forme === 'rond';
+    const gCarre = apercu.querySelector('#boitier') as SVGGElement;
+    const gRond = apercu.querySelector('#boitier_rond') as SVGGElement;
+    gCarre.classList.toggle('hidden', rond);
+    gRond.classList.toggle('hidden', !rond);
+    gCarre.style.display = rond ? 'none' : '';
+    gRond.style.display = rond ? '' : 'none';
+
+    for (const type of TYPES) {
+      const c = parId(selection[type]);
+      if (!c) continue;
+      for (const sel of SELECTEURS[type as keyof typeof SELECTEURS]) {
+        apercu.querySelectorAll<SVGElement>(sel).forEach((el) => (el.style.fill = c.couleur));
+      }
+    }
+    if (cadran) {
+      apercu.querySelectorAll<SVGElement>('[class*="ecran-"]').forEach((el) => (el.style.fill = couleurTexteEcran(cadran.couleur)));
+    }
+
+    // Boutons radio
+    for (const type of TYPES) {
+      const r = document.querySelector<HTMLInputElement>(`input[name="${type}"][value="${selection[type]}"]`);
+      if (r) r.checked = true;
+    }
+
+    // Prix + cadrage
+    const prix = calculerPrix(choisis);
+    document.getElementById('prix')!.textContent = fmt.format(prix);
+    document.getElementById('prix-jour')!.textContent = `soit ${fmt2.format(prix / 365)} par jour la première année`;
+    document.getElementById('badge-forme')!.textContent = rond ? 'Cadran rond' : 'Cadran carré';
+    const n = choisis.length;
+    (document.getElementById('progression') as HTMLProgressElement).value = (n / 4) * 100;
+    document.getElementById('etape-texte')!.textContent = `${n} / 4 éléments choisis`;
+    document.getElementById('recap')!.innerHTML = choisis
+      .map((c: any) => `<span>${c.libelle}</span><span class="text-right tabular-nums">${fmt.format(c.prix)}</span>`)
+      .join('') + `<span>Mouvement & assemblage</span><span class="text-right tabular-nums">${fmt.format(Number(racine.dataset.prixBase))}</span>`;
+  }
+
+  document.querySelectorAll<HTMLInputElement>('#configurateur input[type="radio"]').forEach((r) =>
+    r.addEventListener('change', () => {
+      selection[r.name] = Number(r.value);
+      rendre();
+    })
+  );
+
+  function message(texte: string, type: 'success' | 'error' | 'info' = 'info') {
+    const m = document.getElementById('message')!;
+    m.className = `alert alert-${type} text-sm`;
+    m.textContent = texte;
+  }
+
+  function exigerConnexion() {
+    sessionStorage.setItem('tiktak-brouillon', JSON.stringify({ selection, nom: inputNom.value }));
+    location.href = `/connexion?next=${encodeURIComponent('/configurateur?restaurer=1')}&raison=enregistrer`;
+  }
+
+  async function enregistrer() {
+    if (!connecte) return exigerConnexion(), null;
+    const corps = JSON.stringify({ nom: inputNom.value, composants: TYPES.map((t) => selection[t]) });
+    const res = await fetch(idMontre ? `/api/montres/${idMontre}` : '/api/montres', {
+      method: idMontre ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: corps,
+    });
+    const data = await res.json();
+    if (!res.ok) { message(data.erreur || 'Erreur', 'error'); return null; }
+    idMontre = data.id_montre;
+    history.replaceState(null, '', `/configurateur?id=${idMontre}`);
+    return data;
+  }
+
+  document.getElementById('btn-enregistrer')!.addEventListener('click', async (e) => {
+    const b = e.currentTarget as HTMLButtonElement;
+    b.classList.add('btn-disabled');
+    const data = await enregistrer();
+    b.classList.remove('btn-disabled');
+    if (data) message(`« ${inputNom.value} » est enregistrée dans Mes montres.`, 'success');
+  });
+
+  document.getElementById('btn-commander')!.addEventListener('click', async () => {
+    const data = await enregistrer();
+    if (data) location.href = `/montre/${data.id_montre}?commander=1`;
+  });
+
+  // ---------- Assistant IA ----------
+  const chat = document.getElementById('chat')!;
+  const formIa = document.getElementById('form-ia') as HTMLFormElement;
+  function bulle(texte: string, moi = false) {
+    const d = document.createElement('div');
+    d.className = `chat ${moi ? 'chat-end' : 'chat-start'}`;
+    const b = document.createElement('div');
+    b.className = `chat-bubble ${moi ? 'chat-bubble-primary' : 'bg-base-200 text-base-content'}`;
+    b.textContent = texte;
+    d.append(b);
+    chat.append(d);
+    chat.scrollTop = chat.scrollHeight;
+    return b;
+  }
+  formIa.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = formIa.elements.namedItem('message') as HTMLInputElement;
+    const texte = input.value.trim();
+    if (!texte) return;
+    bulle(texte, true);
+    input.value = '';
+    const attente = bulle('…');
+    try {
+      const res = await fetch('/api/ia', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: texte, selection }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.erreur);
+      Object.assign(selection, data.selection);
+      if (data.nom) inputNom.value = data.nom;
+      attente.textContent = data.reponse;
+      rendre();
+    } catch (err: any) {
+      attente.textContent = 'Désolé, je n’ai pas pu composer cette montre. Réessayez avec d’autres mots.';
+    }
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-suggestion]').forEach((b) =>
+    b.addEventListener('click', () => {
+      (formIa.elements.namedItem('message') as HTMLInputElement).value = b.dataset.suggestion!;
+      formIa.requestSubmit();
+    })
+  );
+
+  rendre();
+</script>

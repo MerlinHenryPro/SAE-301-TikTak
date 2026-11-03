@@ -1,0 +1,22 @@
+{
+  "name": "tiktak",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "start": "node --env-file-if-exists=.env ./dist/server/entry.mjs",
+    "db:init": "node scripts/init-db.mjs",
+    "db:queries": "node scripts/run-queries.mjs"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.9",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^7.4.5",
+    "better-sqlite3": "^13.0.3",
+    "daisyui": "^5.7.50",
+    "tailwindcss": "^4.3.4"
+  }
+}

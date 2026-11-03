@@ -1,0 +1,116 @@
+---
+// Page produit : une seule montre
+import Layout from '../../layouts/Layout.astro';
+import Montre from '../../components/Montre.astro';
+import { montreDe, composantsDeMontre } from '../../lib/montres.js';
+import { FRAIS_LIVRAISON, PRIX_BASE } from '../../lib/watch-core.js';
+import { formatPrix, formatDate } from '../../i18n/index.js';
+
+const { user, lang } = Astro.locals;
+const montre = montreDe(Number(Astro.params.id), user.id_utilisateur);
+if (!montre) return Astro.redirect('/montres');
+const composants = composantsDeMontre(montre.id_montre);
+const parType = Object.fromEntries(composants.map((c) => [c.type, c]));
+const ouvrirCommande = Astro.url.searchParams.has('commander');
+const libelles: Record<string, string> = {
+  cadran: 'Cadran', boitier_exterieur: 'Boîtier extérieur', boitier_interieur: 'Boîtier intérieur', bracelet: 'Bracelet',
+};
+
+// Contenu éditorial généré à partir des composants
+const forme = parType.cadran?.forme === 'rond' ? 'ronde' : 'carrée';
+const description = parType.bracelet
+  ? `Une montre ${forme} au cadran ${parType.cadran.nom_couleur.toLowerCase()}, sertie d’un boîtier en ${parType.boitier_exterieur.materiau.toLowerCase()} ${parType.boitier_exterieur.nom_couleur.toLowerCase()} et portée sur un bracelet ${parType.bracelet.materiau.toLowerCase()} ${parType.bracelet.nom_couleur.toLowerCase()}. Une pièce unique, pensée par vous et assemblée à la main dans notre atelier de Besançon.`
+  : 'Cette création ne contient pas encore de composants. Ouvrez-la dans le configurateur pour la terminer.';
+---
+<Layout titre={montre.nom} description={`${montre.nom} : montre TiK•TaK personnalisée. ${description.slice(0, 120)}`} noindex>
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="breadcrumbs text-sm text-base-content/60 mb-6">
+      <ul><li><a href="/montres">Mes montres</a></li><li>{montre.nom}</li></ul>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12">
+      <div class="bg-base-200 rounded-box p-10 grid place-items-center">
+        <Montre svg={montre.svg} nom={montre.nom} class="h-[min(70vh,560px)]" />
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <p class="eyebrow">Création unique · Réf. TT-{String(montre.id_montre).padStart(5, '0')}</p>
+          <h1 class="text-5xl mt-2">{montre.nom}</h1>
+          <p class="text-sm text-base-content/50 mt-2">Créée le {formatDate(montre.date_creation, lang)}{montre.date_modification && ` · modifiée le ${formatDate(montre.date_modification, lang)}`}</p>
+        </div>
+        <p class="text-3xl font-serif">{formatPrix(montre.prix, lang)}</p>
+        <p class="text-base-content/80 leading-relaxed">{description}</p>
+
+        <table class="table table-sm">
+          <tbody>
+            {composants.map((c) => (
+              <tr>
+                <th class="font-normal text-base-content/60 w-40">{libelles[c.type]}</th>
+                <td class="flex items-center gap-2"><span class="pastille size-4!" style={`background:${c.couleur}`}></span>{c.nom_couleur} · {c.materiau}</td>
+                <td class="text-right tabular-nums">{formatPrix(c.prix, lang)}</td>
+              </tr>
+            ))}
+            <tr><th class="font-normal text-base-content/60">Mouvement & assemblage</th><td>Quartz suisse, assemblé en France</td><td class="text-right tabular-nums">{formatPrix(PRIX_BASE, lang)}</td></tr>
+          </tbody>
+        </table>
+
+        <div class="flex flex-wrap gap-3">
+          <button class="btn btn-primary btn-lg flex-1" onclick="document.getElementById('dlg-commande').showModal()" disabled={!composants.length}>Commander</button>
+          <a href={`/configurateur?id=${montre.id_montre}`} class="btn btn-outline btn-lg">Modifier</a>
+        </div>
+        <ul class="text-sm text-base-content/60 space-y-1">
+          <li>✓ Expédiée sous 7 jours ouvrés, assemblée à la main</li>
+          <li>✓ Garantie 2 ans · retours gratuits pendant 30 jours</li>
+          <li>✓ Écrin en carton recyclé, gravure du nom offerte</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="dlg-commande" class="modal" open={ouvrirCommande && composants.length > 0}>
+    <form class="modal-box space-y-4" id="form-commande">
+      <h3 class="text-3xl">Votre commande</h3>
+      <div class="flex justify-between"><span>{montre.nom}</span><span class="tabular-nums">{formatPrix(montre.prix, lang)}</span></div>
+      <label class="flex items-center justify-between gap-4">
+        <span>Quantité</span>
+        <input type="number" name="quantite" min="1" max="10" value="1" class="input input-sm w-20" />
+      </label>
+      <div class="flex justify-between text-base-content/60"><span>Livraison</span><span id="livraison">{formatPrix(FRAIS_LIVRAISON, lang)}</span></div>
+      <p class="text-xs text-secondary" id="astuce-livraison">Livraison offerte dès 2 montres : de quoi en offrir une.</p>
+      <div class="flex justify-between text-xl font-serif border-t border-base-300 pt-3"><span>Total</span><span id="total" data-prix={montre.prix}>{formatPrix(montre.prix + FRAIS_LIVRAISON, lang)}</span></div>
+      <p class="text-xs text-base-content/50">Paiement simulé (projet pédagogique) : aucune somme n’est débitée.</p>
+      <div class="modal-action">
+        <button type="button" class="btn btn-ghost" onclick="this.closest('dialog').close()">Annuler</button>
+        <button class="btn btn-primary" data-id={montre.id_montre}>Confirmer la commande</button>
+      </div>
+    </form>
+    <form method="dialog" class="modal-backdrop"><button>fermer</button></form>
+  </dialog>
+</Layout>
+
+<script>
+  const form = document.getElementById('form-commande') as HTMLFormElement;
+  const total = document.getElementById('total')!;
+  const q = form.elements.namedItem('quantite') as HTMLInputElement;
+  const fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  q.addEventListener('input', () => {
+    const n = Number(q.value) || 1;
+    const frais = n >= 2 ? 0 : 10;
+    document.getElementById('livraison')!.textContent = frais ? fmt.format(frais) : 'Offerte';
+    document.getElementById('astuce-livraison')!.classList.toggle('hidden', n >= 2);
+    total.textContent = fmt.format(Number(total.dataset.prix) * n + frais);
+  });
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = Number(form.querySelector<HTMLButtonElement>('[data-id]')!.dataset.id);
+    const res = await fetch('/api/commandes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lignes: [{ id_montre: id, quantite: Number(q.value) || 1 }] }),
+    });
+    const data = await res.json();
+    if (res.ok) location.href = `/commandes?nouvelle=${data.id_commande}`;
+    else alert(data.erreur);
+  });
+</script>

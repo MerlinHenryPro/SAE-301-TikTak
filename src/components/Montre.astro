@@ -1,0 +1,8 @@
+---
+// Affiche le SVG d'une montre (stocké en base ou généré)
+interface Props { svg: string | null; nom?: string; class?: string; }
+const { svg, nom = 'Montre TiK•TaK', class: cls = '' } = Astro.props;
+---
+<div class:list={['montre-svg aspect-[520/740]', cls]} aria-label={nom} role="img">
+  {svg ? <Fragment set:html={svg} /> : <div class="w-full h-full grid place-items-center text-base-content/30">—</div>}
+</div>

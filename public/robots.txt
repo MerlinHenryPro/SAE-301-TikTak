@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /montres
+Disallow: /montre/
+Disallow: /commandes
