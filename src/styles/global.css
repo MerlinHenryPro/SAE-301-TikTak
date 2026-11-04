@@ -28,9 +28,9 @@
   --color-warning-content: #1A1A1A;
   --color-error: #9E3B34;
   --color-error-content: #ffffff;
-  --radius-selector: 2rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --radius-selector: 0;
+  --radius-field: 0;
+  --radius-box: 0;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -57,9 +57,9 @@
   --color-error: #D0665E;
   --color-warning: #D9A55A;
   --color-info: #7FA0C0;
-  --radius-selector: 2rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
+  --radius-selector: 0;
+  --radius-field: 0;
+  --radius-box: 0;
   --border: 1px;
   --depth: 0;
   --noise: 0;

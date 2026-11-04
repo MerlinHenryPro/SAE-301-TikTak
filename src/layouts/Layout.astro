@@ -72,7 +72,7 @@ const actif = (href: string) => (href === '/' ? Astro.url.pathname === '/' : Ast
             <button tabindex="0" class="btn btn-ghost btn-square" aria-label="Menu">
               <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="1.5" d="M4 7h16M4 12h16M4 17h16" /></svg>
             </button>
-            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-56 p-2 shadow-lg border border-base-300">
+            <ul tabindex="0" class="menu dropdown-content bg-base-100 z-50 mt-3 w-56 p-2 shadow-lg border border-base-300">
               {nav.map((l) => <li><a href={l.href} class={actif(l.href) ? 'menu-active' : ''}>{l.label}</a></li>)}
             </ul>
           </div>
@@ -96,7 +96,7 @@ const actif = (href: string) => (href === '/' ? Astro.url.pathname === '/' : Ast
                   <span class="size-7 rounded-full bg-primary text-primary-content grid place-items-center text-xs">{user.nom[0]}</span>}
                 <span class="hidden sm:inline">{user.nom.split(' ')[0]}</span>
               </button>
-              <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
+              <ul tabindex="0" class="menu dropdown-content bg-base-100 z-50 mt-3 w-52 p-2 shadow-lg border border-base-300">
                 <li><a href="/montres">{t('nav.montres')}</a></li>
                 <li><a href="/commandes">{t('nav.commandes')}</a></li>
                 <li>

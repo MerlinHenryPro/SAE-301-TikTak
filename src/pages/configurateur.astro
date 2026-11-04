@@ -55,7 +55,7 @@ const semaine = montresCetteSemaine();
         <p class="text-xs text-base-content/60" id="etape-texte">4 / 4 éléments choisis</p>
       </div>
       <progress class="progress progress-secondary w-full h-1" id="progression" value="100" max="100"></progress>
-      <div class="bg-base-200 rounded-box aspect-[4/5] lg:aspect-square grid place-items-center relative overflow-hidden">
+      <div class="bg-base-200 rounded-lg aspect-[4/5] lg:aspect-square grid place-items-center relative overflow-hidden">
         <div id="apercu" class="montre-svg h-[88%] aspect-[520/740]" set:html={svgInitial}></div>
         <div class="absolute top-4 left-4 badge badge-ghost bg-base-100/80 border-0 text-xs" id="badge-forme"></div>
         <p class="absolute bottom-4 inset-x-4 text-center text-xs text-base-content/60">
@@ -107,7 +107,7 @@ const semaine = montresCetteSemaine();
         </fieldset>
       ))}
 
-      <div class="sticky bottom-0 bg-base-100/95 backdrop-blur border-t border-base-300 -mx-4 px-4 py-4 lg:static lg:border lg:rounded-box lg:mx-0 lg:p-6 space-y-3">
+      <div class="sticky bottom-0 bg-base-100/95 backdrop-blur border-t border-base-300 -mx-4 px-4 py-4 lg:static lg:border lg:mx-0 lg:p-6 space-y-3">
         <div class="flex items-end justify-between">
           <div>
             <p class="text-xs uppercase tracking-widest text-base-content/60">{t('conf.total')}</p>

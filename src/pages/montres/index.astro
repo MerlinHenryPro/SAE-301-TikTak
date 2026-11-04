@@ -18,7 +18,7 @@ const montres = montresUtilisateur(user.id_utilisateur);
     </div>
 
     {montres.length === 0 ? (
-      <div class="text-center py-24 border border-dashed border-base-300 rounded-box">
+      <div class="text-center py-24 border border-dashed border-base-300">
         <p class="text-base-content/60">{t('montres.vide')}</p>
         <a href="/configurateur" class="btn btn-primary mt-4">Créer ma première montre</a>
       </div>

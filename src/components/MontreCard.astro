@@ -14,7 +14,7 @@ const { id_montre, nom, prix, date_creation, svg, nb_commandes = 0 } = Astro.pro
 const { lang, t } = Astro.locals;
 ---
 <article class="card bg-base-100 border border-base-300 hover:border-base-content/40 transition-colors group" data-montre={id_montre}>
-  <a href={`/montre/${id_montre}`} class="block bg-base-200 rounded-t-box p-6">
+  <a href={`/montre/${id_montre}`} class="block bg-base-200 p-6">
     <Montre svg={svg} nom={nom} class="max-h-64 mx-auto group-hover:scale-[1.03] transition-transform" />
   </a>
   <div class="card-body gap-1 p-5">
