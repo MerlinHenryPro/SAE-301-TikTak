@@ -7,8 +7,7 @@ Site de la marque française TiK•TaK : on compose sa montre (cadran rond ou ca
 
 | | |
 |---|---|
-| **URL du site** | https://A-COMPLETER (ou http://A-COMPLETER si le certificat n'est pas en place) |
-| **Chemin de la base sur le VPS** | `/var/www/tiktak/data/tiktak.sqlite` |
+| **URL du site** | https://tiktak.merlinhenry.fr |
 | **Maquette Figma** |https://www.figma.com/design/WGoepsvyBp6sWIidyLL84K/Untitled?node-id=6-254&t=T4v9r6rLSycJBSYr-1 |
 | **Compte de démonstration** | `camille@demo.fr` / `tiktak2026` |
 
