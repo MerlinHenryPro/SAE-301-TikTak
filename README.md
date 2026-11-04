@@ -1,9 +1,9 @@
 # TiK•TaK : configurateur de montres personnalisées
 
-SAE 301 « Concevoir et développer une expérience utilisateur ».
+SAE 301 « Concevoir et développer une expérience utilisateur » dans le cadre d'un exercice d'école.
 Site de la marque française TiK•TaK : on compose sa montre (cadran rond ou carré, boîtiers, bracelet), on l'enregistre, on la modifie et on la commande. Une IA (OpenRouter) peut aussi composer la montre à partir d'une phrase.
 
-## 🔗 Liens de rendu
+## Liens de rendu
 
 | | |
 |---|---|
