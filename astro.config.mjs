@@ -12,6 +12,6 @@ export default defineConfig({
   server: { host: true, port: Number(process.env.PORT) || 4321 },
   vite: {
     plugins: [tailwindcss()],
-    ssr: { external: ['better-sqlite3'] },
+    ssr: { external: ['better-sqlite3', 'bun:sqlite'] },
   },
 });
