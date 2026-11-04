@@ -8,7 +8,6 @@ export function GET({ params, locals }) {
   return json({ ...m, composants: composantsDeMontre(m.id_montre) });
 }
 
-// PUT /api/montres/:id : modification
 export async function PUT({ params, request, locals }) {
   if (!locals.user) return nonConnecte();
   try {
@@ -19,7 +18,6 @@ export async function PUT({ params, request, locals }) {
   }
 }
 
-// DELETE /api/montres/:id : suppression
 export function DELETE({ params, locals }) {
   if (!locals.user) return nonConnecte();
   try {

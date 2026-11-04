@@ -1,6 +1,3 @@
-// Internationalisation (bonus) : français par défaut, anglais disponible.
-// La langue est stockée dans le cookie "lang" (voir /api/lang).
-
 export const LANGUES = ['fr', 'en'];
 
 const dict = {

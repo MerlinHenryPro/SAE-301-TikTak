@@ -1,13 +1,11 @@
 import { enregistrerMontre, montresUtilisateur } from '../../../lib/montres.js';
 import { json, nonConnecte } from '../../../lib/http.js';
 
-// GET /api/montres : liste des montres de l'utilisateur
 export function GET({ locals }) {
   if (!locals.user) return nonConnecte();
   return json(montresUtilisateur(locals.user.id_utilisateur).map(({ svg, ...m }) => m));
 }
 
-// POST /api/montres : création d'une montre { nom, composants: [id, ...] }
 export async function POST({ request, locals }) {
   if (!locals.user) return nonConnecte();
   try {

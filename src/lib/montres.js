@@ -26,7 +26,6 @@ export const montresUtilisateur = (idUtilisateur) =>
 export const montreDe = (idMontre, idUtilisateur) =>
   db.prepare('SELECT * FROM montre WHERE id_montre = ? AND id_utilisateur = ?').get(idMontre, idUtilisateur);
 
-/** Valide une configuration : un composant par type, tous existants */
 export function validerConfiguration(ids) {
   const composants = composantsParIds([...new Set((ids || []).map(Number).filter(Boolean))]);
   const types = composants.map((c) => c.type);

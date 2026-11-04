@@ -1,10 +1,3 @@
-# Service systemd : redémarrage automatique de TiK•TaK (crash et reboot du VPS)
-# Installation :
-#   sudo cp deploy/tiktak.service /etc/systemd/system/tiktak.service
-#   sudo systemctl daemon-reload
-#   sudo systemctl enable --now tiktak
-#   sudo systemctl status tiktak      # vérifier
-#   journalctl -u tiktak -f           # logs
 [Unit]
 Description=TiK•TaK - configurateur de montres (Astro / Node)
 After=network.target

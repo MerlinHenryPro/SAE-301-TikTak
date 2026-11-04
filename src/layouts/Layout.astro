@@ -41,7 +41,6 @@ const actif = (href: string) => (href === '/' ? Astro.url.pathname === '/' : Ast
     <link rel="canonical" href={canonical} />
     <link rel="alternate" hreflang="fr" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- Open Graph / réseaux sociaux -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TiK•TaK" />
     <meta property="og:locale" content={lang === 'en' ? 'en_GB' : 'fr_FR'} />
@@ -52,7 +51,6 @@ const actif = (href: string) => (href === '/' ? Astro.url.pathname === '/' : Ast
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={titreComplet} />
     <meta name="twitter:description" content={description} />
-    <!-- Données structurées -->
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'Organization',

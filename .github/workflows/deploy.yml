@@ -1,8 +1,3 @@
-# Déploiement automatique sur le VPS à chaque push sur main.
-# Secrets à créer dans GitHub > Settings > Secrets and variables > Actions :
-#   VPS_HOST     : IP ou domaine du VPS
-#   VPS_USER     : utilisateur SSH (ex. ubuntu)
-#   VPS_SSH_KEY  : clé privée SSH (la clé publique doit être dans ~/.ssh/authorized_keys du VPS)
 name: Déploiement VPS
 
 on:

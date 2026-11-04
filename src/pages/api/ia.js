@@ -1,6 +1,3 @@
-// Configuration de la montre en langage naturel via un modèle gratuit d'OpenRouter.
-// Si aucune clé n'est configurée (ou si le modèle échoue), un analyseur par
-// mots-clés prend le relais pour que la démo fonctionne toujours.
 import { listerComposants } from '../../lib/montres.js';
 import { TYPES } from '../../lib/watch-core.js';
 import { json } from '../../lib/http.js';
@@ -22,7 +19,6 @@ export async function POST({ request }) {
   }
   if (!resultat) resultat = analyseLocale(message, actuelle, composants);
 
-  // Ne garde que des identifiants valides, un par type
   const selection = { ...actuelle };
   for (const type of TYPES) {
     const id = Number(resultat.selection?.[type]);
@@ -71,7 +67,6 @@ Réponds UNIQUEMENT avec un objet JSON :
   return JSON.parse(brut);
 }
 
-// ---------- Analyse locale par mots-clés (secours) ----------
 const MOTS = {
   couleurs: {
     noir: ['noir', 'black', 'sombre', 'dark', 'minuit'],
@@ -99,7 +94,6 @@ function analyseLocale(message, actuelle, composants) {
   const coul = (c) => Object.entries(MOTS.couleurs).filter(([, mots]) => a(...mots)).map(([k]) => k);
   const voulues = coul();
 
-  // Ambiances
   if (a('sport', 'léger', 'leger', 'running')) choisir('bracelet', (c) => c.materiau === 'Silicone' && (voulues.length ? voulues.some((v) => c.nom_couleur.toLowerCase().includes(v)) : true));
   if (a('mariage', 'élégan', 'elegan', 'chic', 'soirée', 'soiree')) {
     choisir('cadran', (c) => c.forme === 'rond' && c.materiau === 'Verre saphir');
@@ -110,10 +104,8 @@ function analyseLocale(message, actuelle, composants) {
     choisir('boitier_interieur', (c) => c.nom_couleur === 'Noir');
   }
 
-  // Forme
   const forme = a('rond', 'ronde', 'round', 'classique') ? 'rond' : a('carr', 'square', 'moderne') ? 'carre' : null;
 
-  // Matériaux de bracelet
   const matBracelet = a('cuir', 'leather') ? 'Cuir' : a('milanaise', 'maille') ? 'Acier' : a('silicone', 'caoutchouc') ? 'Silicone' : a('nylon', 'tissu', 'nato') ? 'Nylon' : a('métal', 'metal', 'acier') ? 'Acier' : null;
 
   const correspond = (c, v) => ({

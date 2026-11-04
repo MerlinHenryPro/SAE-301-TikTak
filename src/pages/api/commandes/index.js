@@ -8,7 +8,6 @@ export function GET({ locals }) {
   })));
 }
 
-// POST /api/commandes { lignes: [{ id_montre, quantite }] }
 export async function POST({ request, locals }) {
   if (!locals.user) return nonConnecte();
   try {

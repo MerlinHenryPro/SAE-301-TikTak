@@ -1,5 +1,4 @@
 ---
-// Page produit : une seule montre
 import Layout from '../../layouts/Layout.astro';
 import Montre from '../../components/Montre.astro';
 import { montreDe, composantsDeMontre } from '../../lib/montres.js';
@@ -16,7 +15,6 @@ const libelles: Record<string, string> = {
   cadran: 'Cadran', boitier_exterieur: 'Boîtier extérieur', boitier_interieur: 'Boîtier intérieur', bracelet: 'Bracelet',
 };
 
-// Contenu éditorial généré à partir des composants
 const forme = parType.cadran?.forme === 'rond' ? 'ronde' : 'carrée';
 const description = parType.bracelet
   ? `Une montre ${forme} au cadran ${parType.cadran.nom_couleur.toLowerCase()}, sertie d’un boîtier en ${parType.boitier_exterieur.materiau.toLowerCase()} ${parType.boitier_exterieur.nom_couleur.toLowerCase()} et portée sur un bracelet ${parType.bracelet.materiau.toLowerCase()} ${parType.bracelet.nom_couleur.toLowerCase()}. Une pièce unique, pensée par vous et assemblée à la main dans notre atelier de Besançon.`

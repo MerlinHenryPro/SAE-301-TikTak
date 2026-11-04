@@ -1,5 +1,3 @@
-// Étape 2 : Google renvoie un "code" que l'on échange contre un jeton,
-// puis on récupère le profil (sub, email, nom, photo) et on ouvre une session.
 import { db } from '../../../../lib/db.js';
 import { creerSession } from '../../../../lib/auth.js';
 
@@ -34,7 +32,6 @@ export async function GET({ url, cookies, redirect }) {
     const p = await profilRes.json();
     if (!p.sub || !p.email) throw new Error('Profil Google incomplet');
 
-    // Compte existant (par google_id ou e-mail) sinon création
     let u = db.prepare('SELECT * FROM utilisateur WHERE google_id = ? OR email = ?').get(p.sub, p.email.toLowerCase());
     if (u) {
       db.prepare('UPDATE utilisateur SET google_id = ?, avatar = COALESCE(?, avatar) WHERE id_utilisateur = ?')

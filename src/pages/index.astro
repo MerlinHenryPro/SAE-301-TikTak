@@ -7,7 +7,6 @@ import { totalMontres } from '../lib/stats.js';
 import { formatPrix } from '../i18n/index.js';
 
 const { t, lang } = Astro.locals;
-// Trois créations « vitrine » générées à partir du catalogue
 const vitrine = [
   { nom: 'Signature', ids: [2, 13, 17, 22], texte: 'Cuir camel, cadran rond noir, acier.' },
   { nom: 'Minuit', ids: [6, 12, 18, 23], texte: 'Silicone bleu nuit, cadran carré saphir.' },
@@ -16,7 +15,6 @@ const vitrine = [
 const total = totalMontres();
 ---
 <Layout titre="Montres françaises personnalisables" description="Composez votre montre TiK•TaK : bracelet, cadran rond ou carré, boîtier. Une horlogerie française, minimaliste et raffinée, à votre image. Dès 79 €.">
-  <!-- HERO -->
   <section class="max-w-7xl mx-auto px-4 pt-12 lg:pt-20 grid lg:grid-cols-2 gap-12 items-center">
     <div class="space-y-8">
       <p class="eyebrow">{t('home.eyebrow')}</p>
@@ -41,7 +39,6 @@ const total = totalMontres();
     </div>
   </section>
 
-  <!-- PREUVE SOCIALE -->
   <section class="max-w-7xl mx-auto px-4 mt-20">
     <div class="stats stats-vertical md:stats-horizontal w-full border border-base-300 bg-base-100">
       <div class="stat"><div class="stat-title">Créations déjà composées</div><div class="stat-value font-serif font-normal">{total}</div></div>
@@ -50,7 +47,6 @@ const total = totalMontres();
     </div>
   </section>
 
-  <!-- ÉTAPES -->
   <section class="max-w-7xl mx-auto px-4 mt-24">
     <p class="eyebrow">Comment ça marche</p>
     <h2 class="text-4xl mt-2 mb-10">Trois minutes pour créer la vôtre</h2>
@@ -69,7 +65,6 @@ const total = totalMontres();
     </ol>
   </section>
 
-  <!-- VITRINE -->
   <section class="max-w-7xl mx-auto px-4 mt-24">
     <div class="flex items-end justify-between mb-8">
       <div>
@@ -92,7 +87,6 @@ const total = totalMontres();
     </div>
   </section>
 
-  <!-- ENGAGEMENT -->
   <section class="max-w-7xl mx-auto px-4 mt-24">
     <div class="bg-accent text-accent-content rounded-box p-10 md:p-16 grid md:grid-cols-2 gap-8 items-center">
       <div>

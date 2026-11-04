@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* ---------- Thème DaisyUI personnalisé « tiktak » (issu de la maquette) ---------- */
 @plugin "daisyui" {
   themes: tiktak --default, tiktak-nuit --prefersdark;
 }
@@ -9,15 +8,15 @@
   name: "tiktak";
   default: true;
   color-scheme: light;
-  --color-base-100: #F7F4EF;   /* Ivoire */
-  --color-base-200: #EFEAE2;   /* Lin */
-  --color-base-300: #E2DBCF;   /* Grège */
-  --color-base-content: #1A1A1A; /* Encre */
+  --color-base-100: #F7F4EF;
+  --color-base-200: #EFEAE2;
+  --color-base-300: #E2DBCF;
+  --color-base-content: #1A1A1A;
   --color-primary: #1A1A1A;
   --color-primary-content: #F7F4EF;
-  --color-secondary: #A8865A;  /* Laiton */
+  --color-secondary: #A8865A;
   --color-secondary-content: #1A1A1A;
-  --color-accent: #1F2A44;     /* Bleu nuit */
+  --color-accent: #1F2A44;
   --color-accent-content: #F7F4EF;
   --color-neutral: #2B2B2E;
   --color-neutral-content: #F7F4EF;
@@ -77,12 +76,10 @@ h1, h2, h3, .font-display { @apply font-serif tracking-tight; }
 
 .eyebrow { @apply text-xs uppercase tracking-[0.25em] text-secondary font-medium; }
 
-/* Montre SVG */
 .montre-svg svg { width: 100%; height: 100%; display: block; }
 .montre-svg .hidden { display: none; }
 .montre-svg [class*="bracelet-"], .montre-svg [class*="boitier-"], .montre-svg [class*="rond-"] {
   transition: fill .35s ease;
 }
 
-/* Pastille de couleur des options */
 .pastille { @apply inline-block size-5 rounded-full border border-base-content/20 shrink-0; }

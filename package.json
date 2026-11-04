@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/init-db.mjs --if-missing",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

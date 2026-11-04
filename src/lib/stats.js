@@ -1,7 +1,5 @@
-// Statistiques réelles utilisées pour les nudges (preuve sociale honnête)
 import { db } from './db.js';
 
-/** id du composant le plus utilisé pour chaque type */
 export function composantsPopulaires() {
   const rows = db.prepare(`
     SELECT c.type, c.id_composant, COUNT(*) AS n

@@ -9,7 +9,6 @@ const { user, t } = Astro.locals;
 const composants = listerComposants();
 const populaires = composantsPopulaires();
 
-// Configuration initiale : montre existante (?id=), preset (?preset=) ou « Signature » (effet de défaut)
 let nom = 'Ma TiK•TaK';
 let idMontre: number | null = null;
 let selection: Record<string, number> = { bracelet: 2, cadran: 13, boitier_exterieur: 17, boitier_interieur: 22 };
@@ -50,7 +49,6 @@ const semaine = montresCetteSemaine();
        data-selection={JSON.stringify(selection)}
        data-prix-base={PRIX_BASE}>
 
-    <!-- APERÇU -->
     <section class="lg:sticky lg:top-24 self-start space-y-4" aria-label="Aperçu de la montre">
       <div class="flex items-center justify-between">
         <p class="eyebrow">{t('conf.titre')}</p>
@@ -67,14 +65,12 @@ const semaine = montresCetteSemaine();
       <div id="recap" class="text-sm text-base-content/70 grid grid-cols-2 gap-x-4 gap-y-1"></div>
     </section>
 
-    <!-- OPTIONS -->
     <section class="space-y-8" aria-label="Personnalisation">
       <div>
         <label class="text-xs uppercase tracking-widest text-base-content/60" for="nom">{t('conf.nom')}</label>
         <input id="nom" class="input input-ghost w-full text-3xl font-serif px-0 h-auto py-2 border-0 border-b border-base-300 rounded-none focus:outline-none focus:border-base-content" value={nom} maxlength="60" />
       </div>
 
-      <!-- Assistant IA (bonus : interface de chat) -->
       <div id="assistant" class="collapse collapse-arrow border border-base-300 bg-base-100">
         <input type="checkbox" checked={Astro.url.hash === '#assistant'} aria-label="Ouvrir l’assistant" />
         <div class="collapse-title font-medium flex items-center gap-2">
@@ -111,7 +107,6 @@ const semaine = montresCetteSemaine();
         </fieldset>
       ))}
 
-      <!-- RÉCAPITULATIF & ACTIONS -->
       <div class="sticky bottom-0 bg-base-100/95 backdrop-blur border-t border-base-300 -mx-4 px-4 py-4 lg:static lg:border lg:rounded-box lg:mx-0 lg:p-6 space-y-3">
         <div class="flex items-end justify-between">
           <div>
@@ -145,7 +140,6 @@ const semaine = montresCetteSemaine();
   const fmt2 = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 });
   const parId = (id: number) => composants.find((c) => c.id_composant === Number(id));
 
-  // Restaure une création non enregistrée (après connexion)
   const brouillon = sessionStorage.getItem('tiktak-brouillon');
   if (brouillon && new URLSearchParams(location.search).has('restaurer')) {
     try {
@@ -156,7 +150,6 @@ const semaine = montresCetteSemaine();
     sessionStorage.removeItem('tiktak-brouillon');
   }
 
-  /** Synchronise le SVG avec la sélection (couleurs + bascule carré/rond) */
   function rendre() {
     const choisis = TYPES.map((t) => parId(selection[t])).filter(Boolean);
     const cadran = parId(selection.cadran);
@@ -179,13 +172,11 @@ const semaine = montresCetteSemaine();
       apercu.querySelectorAll<SVGElement>('[class*="ecran-"]').forEach((el) => (el.style.fill = couleurTexteEcran(cadran.couleur)));
     }
 
-    // Boutons radio
     for (const type of TYPES) {
       const r = document.querySelector<HTMLInputElement>(`input[name="${type}"][value="${selection[type]}"]`);
       if (r) r.checked = true;
     }
 
-    // Prix + cadrage
     const prix = calculerPrix(choisis);
     document.getElementById('prix')!.textContent = fmt.format(prix);
     document.getElementById('prix-jour')!.textContent = `soit ${fmt2.format(prix / 365)} par jour la première année`;
@@ -244,7 +235,6 @@ const semaine = montresCetteSemaine();
     if (data) location.href = `/montre/${data.id_montre}?commander=1`;
   });
 
-  // ---------- Assistant IA ----------
   const chat = document.getElementById('chat')!;
   const formIa = document.getElementById('form-ia') as HTMLFormElement;
   function bulle(texte: string, moi = false) {

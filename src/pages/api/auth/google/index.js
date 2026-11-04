@@ -1,5 +1,3 @@
-// Étape 1 de l'authentification Google (OAuth 2.0 / OpenID Connect) :
-// redirection vers l'écran de consentement Google.
 import { randomBytes } from 'node:crypto';
 
 export function GET({ url, cookies, redirect }) {

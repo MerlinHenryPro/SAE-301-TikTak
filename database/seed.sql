@@ -1,14 +1,9 @@
--- =========================================================
---  TiK•TaK — Jeu de données
--- =========================================================
--- Mot de passe des comptes de démo : tiktak2026
 INSERT INTO utilisateur (nom, email, mot_de_passe, date_inscription) VALUES
  ('Camille Durand', 'camille@demo.fr', 'scrypt$c3f1a7e0b9d24e11$PLACEHOLDER', '2026-10-01 09:12:00'),
  ('Léo Martin',     'leo@demo.fr',     'scrypt$c3f1a7e0b9d24e11$PLACEHOLDER', '2026-10-05 14:30:00'),
  ('Inès Bernard',   'ines@demo.fr',    'scrypt$c3f1a7e0b9d24e11$PLACEHOLDER', '2026-10-12 18:45:00'),
  ('Hugo Petit',     'hugo@demo.fr',    'scrypt$c3f1a7e0b9d24e11$PLACEHOLDER', '2026-10-20 11:00:00');
 
--- Bracelets
 INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, prix) VALUES
  ('bracelet','Bracelet cuir noir',          NULL,'Cuir','#1C1C1C','Noir minuit',     45),
  ('bracelet','Bracelet cuir camel',         NULL,'Cuir','#B07A4A','Camel',           45),
@@ -20,7 +15,6 @@ INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, pri
  ('bracelet','Bracelet maille milanaise',   NULL,'Acier','#C9A27E','Or rose',       119),
  ('bracelet','Bracelet nylon sable',        NULL,'Nylon','#D8C8AE','Sable',          25);
 
--- Cadrans (forme + couleur de l'écran)
 INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, prix) VALUES
  ('cadran','Cadran carré noir',     'carre','Verre minéral','#111111','Noir profond', 35),
  ('cadran','Cadran carré ivoire',   'carre','Verre minéral','#EDE6D8','Ivoire',       35),
@@ -30,7 +24,6 @@ INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, pri
  ('cadran','Cadran rond saphir',    'rond', 'Verre saphir', '#16233B','Bleu saphir', 129),
  ('cadran','Cadran rond vert forêt','rond', 'Verre saphir', '#1F3B2D','Vert forêt',  129);
 
--- Boîtiers extérieurs
 INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, prix) VALUES
  ('boitier_exterieur','Boîtier ext. acier',        NULL,'Acier inoxydable','#C7CBD1','Argent',     60),
  ('boitier_exterieur','Boîtier ext. acier noir',   NULL,'Acier PVD',       '#2B2B2E','Noir mat',   75),
@@ -38,7 +31,6 @@ INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, pri
  ('boitier_exterieur','Boîtier ext. or rose',      NULL,'Acier doré',      '#C9A27E','Or rose',    95),
  ('boitier_exterieur','Boîtier ext. céramique',    NULL,'Céramique',       '#F4F2EE','Blanc',     160);
 
--- Boîtiers intérieurs
 INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, prix) VALUES
  ('boitier_interieur','Boîtier int. acier',        NULL,'Acier inoxydable','#9EA3AA','Argent',     30),
  ('boitier_interieur','Boîtier int. noir',         NULL,'Acier PVD',       '#151517','Noir',       35),
@@ -46,7 +38,6 @@ INSERT INTO composant (type, libelle, forme, materiau, couleur, nom_couleur, pri
  ('boitier_interieur','Boîtier int. or rose',      NULL,'Acier doré',      '#B08463','Or rose',     45),
  ('boitier_interieur','Boîtier int. céramique',    NULL,'Céramique',       '#D9D5CE','Grège',       80);
 
--- Montres (prix = prix de base 79 € + composants)
 INSERT INTO montre (id_utilisateur, nom, prix, date_creation) VALUES
  (1,'Minuit parisien', 0,'2026-10-02 10:00:00'),
  (1,'Sauge du dimanche',0,'2026-10-03 16:20:00'),

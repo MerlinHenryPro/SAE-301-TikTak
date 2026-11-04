@@ -1,6 +1,3 @@
--- =========================================================
---  TiK•TaK — Modèle Physique de Données (SQLite)
--- =========================================================
 PRAGMA foreign_keys = ON;
 
 DROP TABLE IF EXISTS ligne_commande;
@@ -11,7 +8,6 @@ DROP TABLE IF EXISTS composant;
 DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS utilisateur;
 
--- Un utilisateur du site (compte local ou compte Google)
 CREATE TABLE utilisateur (
   id_utilisateur   INTEGER PRIMARY KEY AUTOINCREMENT,
   nom              TEXT    NOT NULL,
@@ -22,14 +18,12 @@ CREATE TABLE utilisateur (
   date_inscription TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
--- Session de connexion (cookie)
 CREATE TABLE session (
   id_session      TEXT    PRIMARY KEY,
   id_utilisateur  INTEGER NOT NULL REFERENCES utilisateur(id_utilisateur) ON DELETE CASCADE,
   date_expiration TEXT    NOT NULL
 );
 
--- Catalogue des composants
 CREATE TABLE composant (
   id_composant INTEGER PRIMARY KEY AUTOINCREMENT,
   type         TEXT    NOT NULL CHECK (type IN ('bracelet','cadran','boitier_exterieur','boitier_interieur')),
@@ -41,7 +35,6 @@ CREATE TABLE composant (
   prix         REAL    NOT NULL CHECK (prix >= 0)
 );
 
--- Montre personnalisée
 CREATE TABLE montre (
   id_montre         INTEGER PRIMARY KEY AUTOINCREMENT,
   id_utilisateur    INTEGER NOT NULL REFERENCES utilisateur(id_utilisateur) ON DELETE CASCADE,
@@ -52,14 +45,12 @@ CREATE TABLE montre (
   date_modification TEXT
 );
 
--- Association N:N montre <-> composant
 CREATE TABLE montre_composant (
   id_montre    INTEGER NOT NULL REFERENCES montre(id_montre) ON DELETE CASCADE,
   id_composant INTEGER NOT NULL REFERENCES composant(id_composant) ON DELETE RESTRICT,
   PRIMARY KEY (id_montre, id_composant)
 );
 
--- Commande
 CREATE TABLE commande (
   id_commande    INTEGER PRIMARY KEY AUTOINCREMENT,
   id_utilisateur INTEGER NOT NULL REFERENCES utilisateur(id_utilisateur) ON DELETE CASCADE,
@@ -69,8 +60,6 @@ CREATE TABLE commande (
   total          REAL    NOT NULL
 );
 
--- Ligne de commande : association N:N commande <-> montre
--- (le prix est figé au moment de la commande)
 CREATE TABLE ligne_commande (
   id_commande   INTEGER NOT NULL REFERENCES commande(id_commande) ON DELETE CASCADE,
   id_montre     INTEGER NOT NULL REFERENCES montre(id_montre) ON DELETE RESTRICT,
